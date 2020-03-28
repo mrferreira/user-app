@@ -4,26 +4,44 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class ErrorMessage {
 	
+	private String mensagem;
+	
 	@Value("${msg.email.exists}")
-	private String emailExistente;
+	protected String emailExists;
 	@Value("${msg.user.password.invalid}")
-	private String invalidUserPassword;
+	protected String invalidUserPassword;
 	@Value("${msg.unauthorized}")
-	private String unauthorized;
+	protected String unauthorized;
 	@Value("${msg.invalid.session}")
-	private String invalidSession;
+	protected String invalidSession;
 
 	public String getMensagem() {
 		return mensagem;
 	}
 
-	public void setMensagem(String mensagem) {
+	public ErrorMessage setMensagem(String mensagem) {
 		this.mensagem = mensagem;
+		return this;
 	}
 	
-	public ErrorMessage emailAlreadyExists() {
+	public static ErrorMessage emailAlreadyExists() {
 		ErrorMessage result = new ErrorMessage();
-		result.setMensagem();
+		return result.setMensagem(result.emailExists);
+	}
+	
+	public static ErrorMessage invalidUserPassword() {
+		ErrorMessage result = new ErrorMessage();
+		return result.setMensagem(result.invalidUserPassword);
+	}
+	
+	public static ErrorMessage unauthorized() {
+		ErrorMessage result = new ErrorMessage();
+		return result.setMensagem(result.unauthorized);
+	}
+	
+	public static ErrorMessage invalidSession() {
+		ErrorMessage result = new ErrorMessage();
+		return result.setMensagem(result.invalidSession);
 	}
 	
 }
