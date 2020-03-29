@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -41,12 +42,15 @@ public class User implements Serializable {
 	)
 	@Id
 	@Column(name = "USER_ID")
-	@GeneratedValue(generator = "S_USER", strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(generator = "S_USER", strategy = GenerationType.SEQUENCE)	
 	private Long id;
+	@NotNull
 	@Column(name = "NAME")
 	private String name;
+	@NotNull
 	@Column(name = "EMAIL")
 	private String email;
+	@NotNull
 	@Column(name = "PASSWORD")
 	private String password;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) 

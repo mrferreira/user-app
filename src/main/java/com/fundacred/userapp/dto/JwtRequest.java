@@ -1,6 +1,7 @@
 package com.fundacred.userapp.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class JwtRequest implements Serializable {
 	
@@ -31,4 +32,5 @@ public class JwtRequest implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
 }

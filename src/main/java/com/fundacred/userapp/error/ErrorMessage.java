@@ -1,7 +1,9 @@
 package com.fundacred.userapp.error;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ErrorMessage {
 	
 	private String mensagem;
@@ -18,30 +20,34 @@ public class ErrorMessage {
 	public String getMensagem() {
 		return mensagem;
 	}
+	
+	public String json() {
+		return String.format("{\"mensagem\": \"%s\"}", mensagem);
+	}
 
 	public ErrorMessage setMensagem(String mensagem) {
 		this.mensagem = mensagem;
 		return this;
 	}
 	
-	public static ErrorMessage emailAlreadyExists() {
-		ErrorMessage result = new ErrorMessage();
-		return result.setMensagem(result.emailExists);
+	public ErrorMessage emailAlreadyExists() {
+		this.setMensagem(this.emailExists);
+		return this;
 	}
 	
-	public static ErrorMessage invalidUserPassword() {
-		ErrorMessage result = new ErrorMessage();
-		return result.setMensagem(result.invalidUserPassword);
+	public ErrorMessage invalidUserPassword() {
+		this.setMensagem(this.invalidUserPassword);
+		return this;
 	}
 	
-	public static ErrorMessage unauthorized() {
-		ErrorMessage result = new ErrorMessage();
-		return result.setMensagem(result.unauthorized);
+	public ErrorMessage unauthorized() {
+		this.setMensagem(this.unauthorized);
+		return this;
 	}
 	
-	public static ErrorMessage invalidSession() {
-		ErrorMessage result = new ErrorMessage();
-		return result.setMensagem(result.invalidSession);
+	public ErrorMessage invalidSession() {
+		this.setMensagem(this.invalidSession);
+		return this;
 	}
 	
 }

@@ -13,9 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * Class representing a phone entity
@@ -45,11 +48,21 @@ public class Phone implements Serializable {
 	private Long id;
 	@ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ID")
+	@JsonBackReference
 	private User user;
+	@NotNull
 	@Column(name = "NUMBER")
 	private String number;
+	@NotNull
 	@Column(name = "DDD")
 	private String ddd;
+	
+	public Phone() {}
+	
+	public Phone(String number, String ddd) {
+		this.number = number;
+		this.ddd = ddd;
+	}
 	
 	public Long getId() {
 		return id;

@@ -2,28 +2,30 @@ package com.fundacred.userapp.controller;
 
 import java.util.Optional;
 
+import javax.validation.constraints.NotNull;
+
+import org.eclipse.jetty.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fundacred.userapp.dto.JwtRequest;
 import com.fundacred.userapp.dto.UserDTO;
-import com.fundacred.userapp.error.ErrorMessage;
 import com.fundacred.userapp.model.User;
 import com.fundacred.userapp.service.UserService;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users", 
+	consumes = MediaType.APPLICATION_JSON_VALUE,
+	produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
 	private final UserService service;
@@ -34,38 +36,27 @@ public class UserController {
 	UserController(UserService service) {
 		this.service = service;
 	}
-	
-	@GetMapping("/test")
-	ResponseEntity<User> getByEmailTest(@RequestParam String email) {
-		return service.findByEmail(email)
-				.map(rec -> ResponseEntity.ok().body(rec))
-				.orElse(ResponseEntity.notFound().build());
-	}
 		
 	@PostMapping("/create")
-	ResponseEntity<User> create(@RequestBody UserDTO payload) {
+	public ResponseEntity<?> create(@NotNull @RequestBody UserDTO payload) {
 		return service.save(payload)
 				.map(rec -> ResponseEntity.ok().body(rec))
-				.orElse(ResponseEntity.ok().build());
+				.orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR_500).build());
+	}
+	
+	@RequestMapping(value = "/profile/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+	public ResponseEntity<?> getProfile(@PathVariable Long id) {
+		return  ResponseEntity.ok().body(service.loadProfile(id).get());
 	}
 	
 	@PostMapping("/authenticate")
-	public ResponseEntity<?> authenticate(@RequestBody JwtRequest authenticationRequest) throws Exception {
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-		Optional<User> result = service.findByEmail(authenticationRequest.getUsername());
-		
-		return result.isPresent()  && result.filter(f -> f.getPassword() == authenticationRequest.getPassword()).isPresent() ? 
-				ResponseEntity.ok().body(result.get()) : 
-				ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorMessage.unauthorized());
+	public ResponseEntity<?> authenticate(@NotNull @RequestBody JwtRequest authenticationRequest) throws Exception {
+		authenticate(authenticationRequest.getUsername().toLowerCase(), authenticationRequest.getPassword());
+		Optional<User> result = service.loadAuthUser(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+		return ResponseEntity.ok().body(result.get());
 	}
 
 	private void authenticate(String username, String password) throws Exception {
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-		} catch (DisabledException e) {
-			throw new Exception("USER_DISABLED", e);
-		} catch (BadCredentialsException e) {
-			throw new Exception("INVALID_CREDENTIALS", e);
-		}
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));		
 	}
 }
