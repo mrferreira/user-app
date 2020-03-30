@@ -1,4 +1,4 @@
-package com.fundacred.userapp.error;
+package com.fundacred.userapp.config;
 
 import java.io.IOException;
 
@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fundacred.userapp.error.ErrorMessage;
 
 @Service
 public class CustomAuthenticationFailureHandler 
@@ -24,7 +25,7 @@ implements AuthenticationFailureHandler {
   ErrorMessage errorMessage;
 
   @Override
-  public void onAuthenticationFailure(
+  public void onAuthenticationFailure( 
     HttpServletRequest request,
     HttpServletResponse response,
     AuthenticationException exception) 
@@ -33,6 +34,6 @@ implements AuthenticationFailureHandler {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());      
 
       response.getOutputStream()
-        .println(objectMapper.writeValueAsString(errorMessage.unauthorized));
+        .println(objectMapper.writeValueAsString(errorMessage.unauthorized().getMensagem()));
   }
 }

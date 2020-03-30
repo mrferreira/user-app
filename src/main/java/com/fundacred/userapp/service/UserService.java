@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fundacred.userapp.config.JwtTokenUtil;
+import com.fundacred.userapp.dao.UserRepository;
 import com.fundacred.userapp.dto.JwtRequest;
 import com.fundacred.userapp.dto.UserDTO;
 import com.fundacred.userapp.error.ErrorMessage;
 import com.fundacred.userapp.model.User;
-import com.fundacred.userapp.persistence.UserRepository;
 
 @Service
 public class UserService {

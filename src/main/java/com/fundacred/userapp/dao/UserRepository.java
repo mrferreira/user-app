@@ -1,4 +1,4 @@
-package com.fundacred.userapp.persistence;
+package com.fundacred.userapp.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
