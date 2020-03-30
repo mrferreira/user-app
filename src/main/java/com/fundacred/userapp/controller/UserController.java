@@ -40,7 +40,7 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> create(@NotNull @RequestBody UserDTO payload) {
 		return service.save(payload)
-				.map(rec -> ResponseEntity.ok().body(rec))
+				.map(rec -> ResponseEntity.status(HttpStatus.CREATED_201).body(rec))
 				.orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR_500).build());
 	}
 	
