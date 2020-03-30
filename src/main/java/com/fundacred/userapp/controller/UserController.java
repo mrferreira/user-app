@@ -10,11 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fundacred.userapp.dto.JwtRequest;
@@ -37,16 +37,11 @@ public class UserController {
 		this.service = service;
 	}
 		
-	@PostMapping("/create")
+	@PostMapping("/signup")
 	public ResponseEntity<?> create(@NotNull @RequestBody UserDTO payload) {
 		return service.save(payload)
 				.map(rec -> ResponseEntity.ok().body(rec))
 				.orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR_500).build());
-	}
-	
-	@RequestMapping(value = "/profile/{id}", method = {RequestMethod.GET, RequestMethod.POST})
-	public ResponseEntity<?> getProfile(@PathVariable Long id) {
-		return  ResponseEntity.ok().body(service.loadProfile(id).get());
 	}
 	
 	@PostMapping("/authenticate")
@@ -56,6 +51,11 @@ public class UserController {
 		return ResponseEntity.ok().body(result.get());
 	}
 
+	@GetMapping("/profile/{id}")
+	public ResponseEntity<?> getProfile(@PathVariable Long id) {
+		return  ResponseEntity.ok().body(service.loadProfile(id).get());
+	}
+	
 	private void authenticate(String username, String password) throws Exception {
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));		
 	}
