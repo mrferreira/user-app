@@ -5,7 +5,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,12 +23,18 @@ import io.jsonwebtoken.SignatureException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-	@Autowired
-	private JwtUserDetailsService jwtUserDetailsService;
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
-	@Autowired
-	private ErrorMessage errorMessage;
+
+	private final JwtUserDetailsService jwtUserDetailsService;
+	private final JwtTokenUtil jwtTokenUtil;
+	private final ErrorMessage errorMessage;
+
+	public JwtRequestFilter(@Lazy JwtUserDetailsService userDetailsService,
+							JwtTokenUtil tokenUtil,
+							ErrorMessage errorMessage) {
+		this.jwtUserDetailsService = userDetailsService;
+		this.jwtTokenUtil = tokenUtil;
+		this.errorMessage = errorMessage;
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)

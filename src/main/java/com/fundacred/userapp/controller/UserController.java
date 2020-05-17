@@ -5,7 +5,6 @@ import java.util.Optional;
 import javax.validation.constraints.NotNull;
 
 import org.eclipse.jetty.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,12 +28,12 @@ import com.fundacred.userapp.service.UserService;
 public class UserController {
 
 	private final UserService service;
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	UserController(UserService service) {
+
+	private final AuthenticationManager authenticationManager;
+
+	UserController(UserService service, AuthenticationManager authenticationManager) {
 		this.service = service;
+		this.authenticationManager = authenticationManager;
 	}
 		
 	@PostMapping("/signup")

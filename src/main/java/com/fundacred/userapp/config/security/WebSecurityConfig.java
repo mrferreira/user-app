@@ -1,6 +1,7 @@
-package com.fundacred.userapp.config;
+package com.fundacred.userapp.config.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fundacred.userapp.config.JwtRequestFilter;
+import com.fundacred.userapp.config.JwtUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -21,28 +21,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	@Autowired
-	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	@Autowired
-	private UserDetailsService jwtUserDetailsService;
-	@Autowired
-	private JwtRequestFilter jwtRequestFilter;
-	@Autowired
-	private UserDetailsService userDetailsService;
-	@Autowired
-	private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtUserDetailsService jwtUserDetailsService;
+	private final JwtRequestFilter jwtRequestFilter;
+	private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+	public WebSecurityConfig(JwtAuthenticationEntryPoint authenticationEntryPoint,
+							 JwtUserDetailsService userDetailsService,
+							 JwtRequestFilter jwtRequestFilter,
+							 CustomAuthenticationFailureHandler customAuthenticationFailureHandler,
+							 AuthenticationManagerBuilder authenticationManagerBuilder) {
+		this.jwtAuthenticationEntryPoint = authenticationEntryPoint;
+		this.jwtUserDetailsService = userDetailsService;
+		this.jwtRequestFilter = jwtRequestFilter;
+		this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
+		this.authenticationManagerBuilder = authenticationManagerBuilder;
+	}
 	 
 	@Bean
 	public DaoAuthenticationProvider authProvider() {
 	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(userDetailsService);
+	    authProvider.setUserDetailsService(jwtUserDetailsService);
 	    authProvider.setPasswordEncoder(passwordEncoder());
 	    return authProvider;
 	}
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+	public void configureGlobal() throws Exception {
+		authenticationManagerBuilder.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -59,7 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/", "/v2/api-docs", "/configuration/ui", "/swagger-resources",
-				"/configuration/security", "/swagger-ui.html", "/webjars/**", "/v2/swagger.json");
+				"/configuration/security", "/swagger-ui.html", "/webjars/**", "/v2/swagger.json",
+				"/actuator/**");
 	}
 
 	@Override

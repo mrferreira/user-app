@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: user-app
+  sleuth:
+    enabled: false
+  cloud:
+    config:
+      uri: ${CONFIG_CLOUD_URI:http://localhost:8888/config}
+      username: ${CONFIG_CLOUD_USERNAME:configserver}
+      password: ${CONFIG_CLOUD_PASSWORD:configserver}
+      fail-fast: true
+
+info: 
+  description: User application

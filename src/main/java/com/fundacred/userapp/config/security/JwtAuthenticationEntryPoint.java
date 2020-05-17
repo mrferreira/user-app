@@ -1,4 +1,4 @@
-package com.fundacred.userapp.config;
+package com.fundacred.userapp.config.security;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -6,7 +6,6 @@ import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -18,8 +17,11 @@ import com.fundacred.userapp.error.ErrorMessage;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Autowired
-	ErrorMessage errorMessage;
+	private final ErrorMessage errorMessage;
+
+	public JwtAuthenticationEntryPoint(ErrorMessage errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 	
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,

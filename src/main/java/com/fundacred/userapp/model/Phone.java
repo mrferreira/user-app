@@ -15,6 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -25,6 +28,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  * @author misael
  * @since 2020-03-27
  */
+@Getter
+@Setter
+@EqualsAndHashCode
 @Entity
 @Table(name = "PHONE",
 		uniqueConstraints = @UniqueConstraint(columnNames = {"NUMBER", "DDD", "USER_ID"}))
@@ -63,48 +69,4 @@ public class Phone implements Serializable {
 		this.number = number;
 		this.ddd = ddd;
 	}
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
-	public String getNumber() {
-		return number;
-	}
-	public void setNumber(String number) {
-		this.number = number;
-	}
-	public String getDdd() {
-		return ddd;
-	}
-	public void setDdd(String ddd) {
-		this.ddd = ddd;
-	}	
-	
-	@Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-             
-        if (!(o instanceof Phone))
-            return false;
-             
-        return
-            id != null &&
-           id.equals(((Phone) o).getId());
-    }
-    @Override
-    public int hashCode() {
-        return 31;
-    }
-	
 }

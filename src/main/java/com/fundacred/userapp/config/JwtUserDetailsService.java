@@ -3,7 +3,7 @@ package com.fundacred.userapp.config;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +17,14 @@ import com.fundacred.userapp.service.UserService;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private ErrorMessage errorMessage;
+	private final UserService userService;
+	private final ErrorMessage errorMessage;
+
+	public JwtUserDetailsService(@Lazy UserService userService,
+								 ErrorMessage errorMessage) {
+		this.userService = userService;
+		this.errorMessage = errorMessage;
+	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) {

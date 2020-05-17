@@ -1,6 +1,5 @@
 package com.fundacred.userapp.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +21,11 @@ import io.jsonwebtoken.SignatureException;
 @ControllerAdvice
 public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@Autowired
-	private ErrorMessage errorMessage;
+	private final ErrorMessage errorMessage;
+
+	public GlobalRestExceptionHandler(ErrorMessage errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 	
 	@ExceptionHandler(value = {UsernameNotFoundException.class, BadCredentialsException.class, 
 			DisabledException.class, AccessDeniedException.class, SignatureException.class,
